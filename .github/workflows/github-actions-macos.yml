@@ -34,7 +34,9 @@ jobs:
           cd build
           cmake ..  -D TCL_LIB_PATHS=/usr/local/opt/tcl-tk/lib \
                     -D TCL_NO_DEFAULT_PATH=TRUE \
-                    -D Qt5_DIR=${MY_QT_PATH}
+                    -D Qt5_DIR=${MY_QT_PATH} \
+                    -D CUDD_LIB=~/.local/lib/libcudd.a \
+                    -D TCL_LIB_PATHS=/opt/homebrew/opt/tcl-tk@8/lib
           make -j 12
 
   build-self-hosted:

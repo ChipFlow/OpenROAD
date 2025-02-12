@@ -36,6 +36,8 @@ if (NOT TCL_LIB_PATHS)
     set(TCL_LIB_PATHS /usr/local/lib
       /opt/homebrew/opt/tcl-tk/lib
       /usr/local/opt/tcl-tk/lib
+      /opt/homebrew/opt/tcl-tk@8/lib
+      /usr/local/opt/tcl-tk@8/lib
       )
     set(TCL_NO_DEFAULT_PATH TRUE)
   elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")

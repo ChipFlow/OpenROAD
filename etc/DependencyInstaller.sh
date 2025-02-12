@@ -50,6 +50,22 @@ _equivalenceDeps() {
     fi
 }
 
+
+_installCUDD() {
+    cuddVersion=3.0.0
+    cuddPrefix=${PREFIX:-"/usr/local"}
+    if [[ ! -f ${cuddPrefix}/include/cudd.h ]]; then
+        cd "${baseDir}"
+        git clone --depth=1 -b ${cuddVersion} https://github.com/The-OpenROAD-Project/cudd.git
+        cd cudd
+        autoreconf
+        ./configure --prefix=${cuddPrefix}
+        make -j $(nproc) install
+    else
+        echo "Cudd already installed."
+    fi
+}
+
 _installCommonDev() {
     lastDir="$(pwd)"
     arch=$(uname -m)
@@ -70,7 +86,6 @@ _installCommonDev() {
     boostVersionSmall=${boostVersionBig}.0
     boostChecksum="077f074743ea7b0cb49c6ed43953ae95"
     eigenVersion=3.4
-    cuddVersion=3.0.0
     lemonVersion=1.3.1
     spdlogVersion=1.8.1
     gtestVersion=1.13.0
@@ -153,18 +168,7 @@ _installCommonDev() {
     fi
     CMAKE_PACKAGE_ROOT_ARGS+=" -D Eigen3_ROOT=$(realpath $eigenPrefix) "
 
-    # cudd
-    cuddPrefix=${PREFIX:-"/usr/local"}
-    if [[ ! -f ${cuddPrefix}/include/cudd.h ]]; then
-        cd "${baseDir}"
-        git clone --depth=1 -b ${cuddVersion} https://github.com/The-OpenROAD-Project/cudd.git
-        cd cudd
-        autoreconf
-        ./configure --prefix=${cuddPrefix}
-        make -j $(nproc) install
-    else
-        echo "Cudd already installed."
-    fi
+    _installCUDD
 
     # CUSP
     cuspPrefix=${PREFIX:-"/usr/local/include"}
@@ -517,7 +521,8 @@ Then, rerun this script.
 EOF
     exit 1
     fi
-    brew install bison boost cmake eigen flex fmt groff libomp or-tools pandoc pyqt5 python spdlog tcl-tk zlib
+
+    brew install bison boost cmake eigen flex fmt groff libomp or-tools pandoc pyqt5 python spdlog tcl-tk@8 zlib
 
     # Some systems need this to correctly find OpenMP package during build
     brew link --force libomp
@@ -527,6 +532,14 @@ EOF
 
     # Install swig 4.1.1
     _installHomebrewPackage "swig" "c83c8aaa6505c3ea28c35bc45a54234f79e46c5d" "s/"
+
+    # Set to -local if no -prefix set
+    if [[  -z ${PREFIX} ]]; then
+        export PREFIX="${HOME}/.local"
+        export isLocal="true"
+    fi
+    # Cudd not available in homebrew, install from source
+    _installCUDD
 }
 
 _installDebianCleanUp() {
