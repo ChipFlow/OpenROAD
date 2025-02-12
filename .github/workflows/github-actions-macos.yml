@@ -28,7 +28,7 @@ jobs:
           export PATH="$(brew --prefix tcl-tk)/bin:$PATH"
           export CMAKE_PREFIX_PATH="$(brew --prefix or-tools)"
           export PKG_CONFIG_PATH="$(brew --prefix tcl-tk)/lib/pkgconfig"
-          export MY_QT_PATH=$(find /usr/local/Cellar/qt@5/ -type d -iwholename "*cmake/Qt5")
+          export MY_QT_PATH=$(find $(brew --prefix)/Cellar/qt@5/ -type d -iwholename "*cmake/Qt5")
           echo "MY_QT_PATH = $MY_QT_PATH"
           mkdir build
           cd build
